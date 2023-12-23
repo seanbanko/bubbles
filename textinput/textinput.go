@@ -709,16 +709,16 @@ func (m Model) placeholderView() string {
 		style = m.PlaceholderStyle.Inline(true).Render
 	)
 
+	// Pad or truncate the placeholder to m.Width
+	padding := []rune(strings.Repeat(" ", max(0, m.Width-len(p)+1)))
+	p = append(p, padding...)[:min(m.Width, len(p))]
+
 	m.Cursor.TextStyle = m.PlaceholderStyle
 	m.Cursor.SetChar(string(p[:1]))
 	v += m.Cursor.View()
 
-	// The rest of the placeholder text
-	var spaces []rune
-	for i := 0; i < m.Width-lipgloss.Width(string(p[1:m.Width])); i++ {
-		spaces = append(spaces, ' ')
-	}
-	v += style(string(append(p[1:m.Width], spaces...)))
+	// The rest of the placeholer text
+	v += style(string(p[1:]))
 
 	return m.PromptStyle.Render(m.Prompt) + v
 }
